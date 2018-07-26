@@ -1,11 +1,11 @@
-var express = require('express');
-var router = express.Router();
-var passport = require('passport');
-var connection = require('..//db/connection');
-var LocalStrategy = require('passport-local').Strategy;
-var crypto = require('crypto');
+const express = require('express');
+const router = express.Router();
+const passport = require('passport');
+const connection = require('..//db/connection');
+const LocalStrategy = require('passport-local').Strategy;
+const crypto = require('crypto');
 
-var app = express();
+const app = express();
 
 app.use(passport.initialize());
 app.use(passport.session());

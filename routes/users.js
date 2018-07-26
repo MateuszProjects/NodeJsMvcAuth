@@ -1,10 +1,28 @@
-var express = require('express');
-var router = express.Router();
-var connection = require('../db/connection');
+const express = require('express');
+const router = express.Router();
+const connection = require('../db/connection');
+
+var _name = "";
+var _surname = "";
 
 /* GET users listing. */
 router.get('/', isAuthenticated, (req, res) => {
-  res.render('private/index', { username: 'dane', });
+  console.log("req.session: " + req.session.user.id);
+  connection.query("SELECT name, surname FROM db_sql where id  =  ?", [req.session.user.id], (err, rows)=>{
+   try  {
+    if(err) {
+       console.log('err');
+    }
+    else{
+      _name = rows[0].name;
+      _surname = rows[0].surname;
+
+      res.render('private/index', {name: _name, surname: _surname});
+    } 
+  } catch(e){
+    console.log('error')
+  }
+  });
 });
 
 router.get('/invoice', isAuthenticated, (req, res) => {
@@ -17,25 +35,16 @@ router.get('/invoice', isAuthenticated, (req, res) => {
 router.get('/profile', isAuthenticated,  (req, res) =>{
   res.render('private/profile', { username: 'dane', });
 });
-/*
-router.delete('/delete/:id', isAuthenticated, (req, res) => {
+
+router.get('/delete/:id', isAuthenticated, (req, res) => {
   connection.query(sql, req.params.id, (err, done)=>{
       if (err) console.log("error deleate");
   });
   res.redirect('/users/invoice');
 });
-*/
+
 router.get('/update', isAuthenticated, (req, res)=>{
   res.render('private/update');
-});
-
-router.get('/edit/:id', isAuthenticated, (req, res)=>{
-  var sql = "SELECT * FROM db_sql where id = ?";
-  connection.query(sql, req.params.id, (err, user)=>{
-      if (err) console.log("err");
-      else res.render('private/update', { data: user[0]});
-  });  
-   res.redirect('/users/update');
 });
 
 router.put('/edit/:id', isAuthenticated, (req, res) => {
@@ -62,12 +71,12 @@ router.put('/edit/:id', isAuthenticated, (req, res) => {
     });
 });
 
+// logout with app.
 router.get('/logout', function(req, res){
   req.session.destroy();
   req.logout();
   res.redirect('/');
   });
-
   
 function isAuthenticated(req, res, next) {
   if (req.session.user)

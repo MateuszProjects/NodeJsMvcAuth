@@ -1,30 +1,29 @@
-var createError = require('http-errors');
-var express = require('express');
-var path = require('path');
-var bodyParser = require('body-parser');
-var cookieParser = require('cookie-parser');
-var logger = require('morgan');
-var hbs = require('hbs');
-var connection = require('./db/connection');
+const createError = require('http-errors');
+const express = require('express');
+const path = require('path');
+const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
+const logger = require('morgan');
+const hbs = require('hbs');
 
-var indexRouter = require('./routes/index');
-var usersRouter = require('./routes/users');
+const indexRouter = require('./routes/index');
+const usersRouter = require('./routes/users');
 
-var app = express();
+const app = express();
 
 // view engine setup
 hbs.registerPartials(__dirname + '/views/partials');
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-var flash = require('connect-flash');
+const flash = require('connect-flash');
 
 /* Login script */
-var passport = require('passport');
-var sess = require('express-session');
-var Store = require('express-session').Store
-var BetterMemoryStore = require(__dirname + '/memory')
-var store = new BetterMemoryStore({ expires: 60 * 60 * 1000, debug: true })
+const passport = require('passport');
+const sess = require('express-session');
+const Store = require('express-session').Store
+const BetterMemoryStore = require(__dirname + '/memory')
+const store = new BetterMemoryStore({ expires: 60 * 60 * 1000, debug: true })
 
 app.use(sess({
   name: 'JSESSION',
@@ -52,14 +51,6 @@ app.use('/users', usersRouter);
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
-});
-
-app.post('/customer/:id', (req, res) => {
-  connection.query('DELETE db_sql WHERE id = ?',[req.params.id],(err, rows, fields) => {
-      if (err) console.log("error deleate");
-      else res.send('Successfully.') 
-  }); 
-  // res.redirect('/users/invoice');
 });
 
 // error handler
