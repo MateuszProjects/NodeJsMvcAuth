@@ -2,38 +2,20 @@ const express = require('express');
 const router = express.Router();
 const connection = require('../db/connection');
 
-var _name = "";
-var _surname = "";
-
 /* GET users listing. */
 router.get('/', isAuthenticated, (req, res) => {
-  console.log("req.session: " + req.session.user.id);
-  connection.query("SELECT name, surname FROM db_sql where id  =  ?", [req.session.user.id], (err, rows)=>{
-   try  {
-    if(err) {
-       console.log('err');
-    }
-    else{
-      _name = rows[0].name;
-      _surname = rows[0].surname;
-
-      res.render('private/index', {name: _name, surname: _surname});
-    } 
-  } catch(e){
-    console.log('error')
-  }
-  });
+      res.render('private/index', {name: req.session.user.name, surname: req.session.user.surname});
 });
 
 router.get('/invoice', isAuthenticated, (req, res) => {
   var sql = "SELECT * FROM db_sql ";
   connection.query(sql, function(err, rows){
-      res.render('private/invoice', { username: 'dane', data: rows});
+      res.render('private/invoice', { name: req.session.user.name, surname: req.session.user.surname, data: rows});
   });
 });
 
 router.get('/profile', isAuthenticated,  (req, res) =>{
-  res.render('private/profile', { username: 'dane', });
+  res.render('private/profile', {name: req.session.user.name, surname: req.session.user.surname});
 });
 
 router.get('/delete/:id', isAuthenticated, (req, res) => {
@@ -44,7 +26,7 @@ router.get('/delete/:id', isAuthenticated, (req, res) => {
 });
 
 router.get('/update', isAuthenticated, (req, res)=>{
-  res.render('private/update');
+  res.render('private/update', {name: req.session.user.name, surname: req.session.user.surname});
 });
 
 router.put('/edit/:id', isAuthenticated, (req, res) => {
