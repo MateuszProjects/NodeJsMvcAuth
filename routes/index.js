@@ -67,8 +67,6 @@ router.post('/signin', passport.authenticate('local', {
 router.post('/register', function(req, res, info){
   var username = req.body.username;
   connection.query('SELECT * FORM db_sql where username = ?', [username], function(err, user){
-    
-   //  if (err) { return console.log("ppp");}
 
     if (user){
       return done(req.flash('message', "User alredy exist."));

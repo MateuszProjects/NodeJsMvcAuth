@@ -2,6 +2,7 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const bodyParser = require('body-parser');
+// const cookeSession = requier('cookie-session');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const hbs = require('hbs');
@@ -37,7 +38,11 @@ app.use(sess({
   resave: true,
   saveUninitialized: true
 }));
+/*
+app.use(cookeSession({
 
+}));
+*/
 app.use(flash());
 
 app.use(passport.initialize());

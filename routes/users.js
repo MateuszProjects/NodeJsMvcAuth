@@ -14,6 +14,26 @@ router.get('/invoice', isAuthenticated, (req, res) => {
   });
 });
 
+router.get('/boxed', isAuthenticated, (req, res) => {
+  res.render('private/boxed', {name: req.session.user.name, surname: req.session.user.surname});
+});
+
+router.get('/fixed', isAuthenticated, (req, res) => {
+  res.render('private/fixed', {name: req.session.user.name, surname: req.session.user.surname});
+});
+
+router.get('/pacepage', isAuthenticated, (req, res) => {
+  res.render('private/pacepage', {name: req.session.user.name, surname: req.session.user.surname});
+});
+
+router.get('/dashboard1', isAuthenticated, (req, res) => {
+  res.render('private/dashboard1', {name: req.session.user.name, surname: req.session.user.surname});
+});
+
+router.get('/dashboard2', isAuthenticated, (req, res) => {
+  res.render('private/dashboard2', {name: req.session.user.name, surname: req.session.user.surname});
+});
+
 router.get('/profile', isAuthenticated,  (req, res) =>{
   res.render('private/profile', {name: req.session.user.name, surname: req.session.user.surname});
 });
