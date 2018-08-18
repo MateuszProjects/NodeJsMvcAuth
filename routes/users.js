@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const connection = require('../db/connection');
+const models = require('../models');
+
 
 /* GET users listing. */
 router.get('/', isAuthenticated, (req, res) => {
@@ -72,6 +74,16 @@ router.put('/edit/:id', isAuthenticated, (req, res) => {
       if (err) console.log('Error');
     });
 });
+
+/* GET users listing. */
+router.get('/', function(req, res, next) {
+ models.user_db.findAll().then(function(user){
+    res.send(user);
+   });
+});
+
+module.exports = router;
+
 
 // logout with app.
 router.get('/logout', function(req, res){
