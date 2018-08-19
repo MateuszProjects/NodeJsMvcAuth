@@ -10,9 +10,8 @@ router.get('/', isAuthenticated, (req, res) => {
 });
 
 router.get('/invoice', isAuthenticated, (req, res) => {
-  var sql = "SELECT * FROM db_sql ";
-  connection.query(sql, function(err, rows){
-      res.render('private/invoice', { name: req.session.user.name, surname: req.session.user.surname, data: rows});
+  models.user_db.findAll().then(function(user){
+    res.render('private/invoice', { name: req.session.user.firstname, surname: req.session.user.lastname, data: user});
   });
 });
 
@@ -41,10 +40,10 @@ router.get('/profile', isAuthenticated,  (req, res) =>{
 });
 
 router.get('/delete/:id', isAuthenticated, (req, res) => {
-  connection.query(sql, req.params.id, (err, done)=>{
+/*  connection.query(sql, req.params.id, (err, done)=>{
       if (err) console.log("error deleate");
   });
-  res.redirect('/users/invoice');
+  res.redirect('/users/invoice');*/
 });
 
 router.get('/update', isAuthenticated, (req, res)=>{
@@ -81,9 +80,6 @@ router.get('/', function(req, res, next) {
     res.send(user);
    });
 });
-
-module.exports = router;
-
 
 // logout with app.
 router.get('/logout', function(req, res){

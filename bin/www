@@ -7,7 +7,7 @@
 var app = require('../app');
 var debug = require('debug')('nodeauth:server');
 var http = require('http');
-
+var https = require('https');
 /**
  * Get port from environment and store in Express.
  */
