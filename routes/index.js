@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const connection = require('..//db/connection');
 const LocalStrategy = require('passport-local').Strategy;
+const models = require('../models');
 const crypto = require('crypto');
 
 const app = express();
@@ -17,22 +18,23 @@ passport.use('local', new LocalStrategy({
   }, function (req, username, password, done) {
       if(!username || !password ) { return done(null, false, req.flash('message','All fields are required.')); }
       var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
-      connection.query('SELECT * FROM db_sql where username = ?',[username], function(err, rows) {
-      if (err) return done(req.flash('message',err));
-
-      if (!rows.length) return done(null, false, req.flash('message', 'Invalid username or password'));
-
-      salt = salt+''+password;
-
-      var encPassword = crypto.createHash('sha1').update(salt).digest('hex');
-      var dbPassword = rows[0].password;
+      models.user_db.findOne({
+              where: {username: username}
+        }).then(function(user) {        
+          if (user) {
+            salt = salt+''+password;
+            var encPassword = crypto.createHash('sha1').update(salt).digest('hex');
+            var dbPassword = user.password;
       
-      if(!(dbPassword == encPassword)){
-          return done(null, false, req.flash('message','Invalid username or password.'));
-      }
-       // add to session user object.
-        req.session.user = rows[0];
-        return done(null, rows[0]);
+            if(!(dbPassword == encPassword)){
+                return done(null, false, req.flash('message','Invalid username or password.'));
+            }
+            // add to session user object.
+            req.session.user = user;
+            return done(null, user);
+          } else {
+            return done(null, false, req.flash('message', 'Invalid username or password'));
+          }
       });
   }
 ));
@@ -42,8 +44,8 @@ passport.serializeUser(function(user, done) {
 });
 
 passport.deserializeUser(function(id, done) {
-  connection.query("select * from db_sql where id = "+ id, function (err, rows){  
-      done(err, rows[0]);
+  models.user_db.findById(id).then(user => {
+    done(null, user);
   });
 });
 
@@ -66,8 +68,10 @@ router.post('/signin', passport.authenticate('local', {
 
 router.post('/register', function(req, res, info){
   var username = req.body.username;
-  connection.query('SELECT * FORM db_sql where username = ?', [username], function(err, user){
-
+  
+  moduel.user_db.findOne({
+    where: {username: username}
+  }).then(function(user){
     if (user){
       return done(req.flash('message', "User alredy exist."));
     } else {
@@ -84,10 +88,16 @@ router.post('/register', function(req, res, info){
         full_name: req.body.full_name,
         password: hash
       }
-      var sql = "INSERT INTO db_sql SET ? ";
+      models.user_db.create({
+        name: req.body.name
+        }).then(()=>{
+
+      })
+      /*var sql = "INSERT INTO db_sql SET ? ";
       connection.query(sql, newUser, function(err, done){
           if (err) return done(req.flash('message', 'Error.'))
       });
+    */
     }
   });
       res.render('register', {'message': req.flash('message')});
