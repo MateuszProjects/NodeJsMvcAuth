@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const connection = require('../db/connection');
 const models = require('../models');
+const data = require('node-datetime');
 
 
 /* GET users listing. */
@@ -40,10 +40,6 @@ router.get('/profile', isAuthenticated,  (req, res) =>{
 });
 
 router.get('/delete/:id', isAuthenticated, (req, res) => {
-/*  connection.query(sql, req.params.id, (err, done)=>{
-      if (err) console.log("error deleate");
-  });
-  res.redirect('/users/invoice');*/
 });
 
 router.get('/update', isAuthenticated, (req, res)=>{
@@ -51,7 +47,6 @@ router.get('/update', isAuthenticated, (req, res)=>{
 });
 
 router.put('/edit/:id', isAuthenticated, (req, res) => {
-    var sql = "UPDATE db_sql SET ? WHERE id = " + req.params.id;
     var hash;
 
     if (req.body.password){
@@ -62,15 +57,18 @@ router.put('/edit/:id', isAuthenticated, (req, res) => {
                     .digest('hex');          
     }
 
-    var updateObject = {
-      name: req.body.name,
-      surname: req.body.surname,
+    var dt = data.create();
+    var formatted = dt.format('Y-m-d H:M:S');
+
+    models.user_db.update({
+      firstname: req.body.name,
+      lastname: req.body.surname,
       username: req.body.username,
-      full_name: req.body.full_name,
-      password: hash
-    }
-    connection.query(sql, updateObject, (err, done)=>{
-      if (err) console.log('Error');
+      passport: hash,
+      last_login: formatted,
+      updateAt: formatted
+      }).then(()=>{
+        console.log("New user has been update");
     });
 });
 

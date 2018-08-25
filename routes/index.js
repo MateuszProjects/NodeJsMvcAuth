@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router();
 const passport = require('passport');
-const connection = require('..//db/connection');
 const LocalStrategy = require('passport-local').Strategy;
 const models = require('../models');
 const crypto = require('crypto');
+const data = require('node-datetime');
 
 const app = express();
 
@@ -81,23 +81,22 @@ router.post('/register', function(req, res, info){
       const hash = crypto.createHash('sha1')
                      .update(salt)
                      .digest('hex');              
-      var newUser = {
-        name: req.body.name,
-        surname: req.body.surname,
-        username: req.body.username,
-        full_name: req.body.full_name,
-        password: hash
-      }
-      models.user_db.create({
-        name: req.body.name
-        }).then(()=>{
 
-      })
-      /*var sql = "INSERT INTO db_sql SET ? ";
-      connection.query(sql, newUser, function(err, done){
-          if (err) return done(req.flash('message', 'Error.'))
+      var dt = data.create();
+      var formatted = dt.format('Y-m-d H:M:S');
+
+      models.user_db.create({
+        firstname: req.body.name,
+        lastname: req.body.surname,
+        username: req.body.username,
+        passport: hash,
+        status: 'active',
+        last_login: formatted,
+        craatedAt: formatted,
+        updateAt: formatted
+        }).then(()=>{
+          console.log("New user has been create");
       });
-    */
     }
   });
       res.render('register', {'message': req.flash('message')});
