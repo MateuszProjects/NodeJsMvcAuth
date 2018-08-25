@@ -46,7 +46,7 @@ router.get('/update', isAuthenticated, (req, res)=>{
   res.render('private/update', {name: req.session.user.name, surname: req.session.user.surname});
 });
 
-router.put('/edit/:id', isAuthenticated, (req, res) => {
+router.post('/edit/:id', isAuthenticated, (req, res) => {
     var hash;
 
     if (req.body.password){

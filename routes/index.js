@@ -69,7 +69,7 @@ router.post('/signin', passport.authenticate('local', {
 router.post('/register', function(req, res, info){
   var username = req.body.username;
   
-  moduel.user_db.findOne({
+  models.user_db.findOne({
     where: {username: username}
   }).then(function(user){
     if (user){
@@ -89,7 +89,7 @@ router.post('/register', function(req, res, info){
         firstname: req.body.name,
         lastname: req.body.surname,
         username: req.body.username,
-        passport: hash,
+        password: hash,
         status: 'active',
         last_login: formatted,
         craatedAt: formatted,
