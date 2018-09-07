@@ -1,2 +1,2 @@
 # NodeJsMvcAuth
-Application with register(Google+), login and CRUD operation.
+Application with register(Google+), login based on Passport.js and CRUD operation.
